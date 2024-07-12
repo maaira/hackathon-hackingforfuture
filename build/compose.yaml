@@ -23,12 +23,12 @@ services:
   mosquitto:
     image: eclipse-mosquitto
     hostname: mosquitto
-    container_name: mosquitto
+    container_name: mqtt
     restart: unless-stopped
     ports:
       - "1883:1883"
-      - "9001:9001"
+      - "5050:5050"
     volumes:
-      - ../config:/mosquitto/config
+      - ../config/mosquitto:/mosquitto/config
       - ../database/mosquitto/data:/mosquitto/data
       - ../database/mosquitto/log:/mosquitto/log
