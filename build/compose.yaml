@@ -6,17 +6,17 @@ services:
       ports:
         - '8086:8086'
       volumes:
-        - ${BASE_PATH}/alpha/influxdb:/var/lib/influxdb2 # Persistent storage of data
-        - ../config/influxdb/influxdb.conf:/etc/influxdb2/influx-configs.conf # Mount config file
+        - ./database/influxdb:/var/lib/influxdb2 # Persistent storage of data
+        - ./config/influxdb/influxdb.conf:/etc/influxdb2/influx-configs.conf # Mount config file
       env_file: 
         - ../env/influxdb.env
   telegraf:
-      image: telegraf:1.26.1
+      image: telegraf:latest
       container_name: telegraf
       restart: always
       ports:
         - '8094:8094/udp'
       volumes:
-        - ../config/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf # Mount config file
+        - ./config/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf # Mount config file
       env_file:
         - ../env/telegraf.env
