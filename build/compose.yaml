@@ -6,8 +6,8 @@ services:
       ports:
         - '8086:8086'
       volumes:
-        - ./database/influxdb:/var/lib/influxdb2 # Persistent storage of data
-        - ./config/influxdb/influxdb.conf:/etc/influxdb2/influx-configs.conf # Mount config file
+        - ../database/influxdb:/var/lib/influxdb2 # Persistent storage of data
+        - ../config/influxdb/influxdb.conf:/etc/influxdb2/influx-configs.conf # Mount config file
       env_file: 
         - ../env/influxdb.env
   telegraf:
@@ -17,8 +17,17 @@ services:
       ports:
         - '8094:8094/udp'
       volumes:
-        - ./config/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf # Mount config file
-      enviroment:      
-        - DOCKER_INFLUXDB_INIT_BUCKET : 
+        - ../config/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf # Mount config file
       env_file:
         - ../env/telegraf.env
+  mosquitto:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto:/etc/mosquitto
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
