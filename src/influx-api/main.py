@@ -10,10 +10,10 @@ app = FastAPI()
 
 # Configurações do InfluxDB
 url = os.getenv("INFLUXDB_URL", "http://localhost:8086")
-token = os.getenv("INFLUXDB_TOKEN", "YOUR_API_TOKEN")
-org = os.getenv("INFLUXDB_ORG", "YOUR_ORG")
-bucket = os.getenv("INFLUXDB_BUCKET", "your_bucket")
-
+token = os.getenv("INFLUXDB_TOKEN", "qMlzq7OG1TBzJDSp6VCuWKjuwFqdmcnYsbJ72nvKvRaYq3L4E3GRkdk0IiH3i_iYsWi6PwVWyBNTsRCiyzbP_A==")
+org = os.getenv("INFLUXDB_ORG", "my-org")
+bucket = os.getenv("INFLUXDB_BUCKET", "3d-printer")
+print(token)
 client = InfluxDBClient(url=url, token=token, org=org)
 query_api = client.query_api()
 
@@ -22,11 +22,12 @@ class QueryModel(BaseModel):
     measurement: str
     start: str
     stop: str
+    bucket: str
 
-@app.post("/gettimeline")
+@app.get("/gettimeline")
 async def query_influxdb(query: QueryModel):
     flux_query = f'''
-    from(bucket: "{bucket}")
+    from(bucket: "{query.bucket}")
         |> range(start: {query.start}, stop: {query.stop})
         |> filter(fn: (r) => r._measurement == "{query.measurement}")
     '''
