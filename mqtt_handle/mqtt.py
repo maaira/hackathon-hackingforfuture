@@ -67,29 +67,36 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
+def acquire_data_from_arduino():
+    temp = read_temp_humi_press(bleService, uuid_dict['temperature'])
+    humi = read_temp_humi_press(bleService, uuid_dict['humidity'])
+    pressure = read_temp_humi_press(bleService, uuid_dict['pressure'])
+    acc = read_imu(bleService, uuid_dict['accelerometer'])
+    gyro = read_imu(bleService, uuid_dict['gyroscope'])
+    mag = read_imu(bleService, uuid_dict['magnetometer'])
+    return temp, humi, pressure, acc, gyro, mag
 
-def publish(client):
+
+def publish(client, temp, humi, pressure, acc, gyro, mag, kalman_estimation_temperature,bed_temperature, tool_temperature, printing):
     while True:
         time.sleep(1)
-        temp = read_temp_humi_press(bleService, uuid_dict['temperature'])
-        humi = read_temp_humi_press(bleService, uuid_dict['humidity'])
-        pressure = read_temp_humi_press(bleService, uuid_dict['pressure'])
-        acc = read_imu(bleService, uuid_dict['accelerometer'])
-        gyro = read_imu(bleService, uuid_dict['gyroscope'])
-        mag = read_imu(bleService, uuid_dict['magnetometer'])
         msg = {
-            "temperature": temp,
-            "humidity": humi,
-            "pressure": pressure,
-            "accelerometer_x": acc['x'],
-            "accelerometer_y": acc['y'],
-            "accelerometer_z": acc['z'],
-            "gyroscope_x": gyro['x'],
-            "gyroscope_y": gyro['y'],
-            "gyroscope_z": gyro['z'],
-            "magnetometer_x": mag['x'],
-            "magnetometer_y": mag['y'],
-            "magnetometer_z": mag['z'],
+            "printing": str(printing),
+            "estimate_table_temperature": kalman_estimation_temperature,
+            "octor_print_table_temperature":bed_temperature,
+            "octor_print_tool_temperature": tool_temperature,
+            "arduino_table_temperature": temp,
+            "arduino_humidity": humi,
+            "arduino_pressure": pressure,
+            "arduino_accelerometer_x": acc['x'],
+            "arduino_accelerometer_y": acc['y'],
+            "arduino_accelerometer_z": acc['z'],
+            "arduino_gyroscope_x": gyro['x'],
+            "arduino_gyroscope_y": gyro['y'],
+            "arduino_gyroscope_z": gyro['z'],
+            "arduino_magnetometer_x": mag['x'],
+            "arduino_magnetometer_y": mag['y'],
+            "arduino_magnetometer_z": mag['z'],
             "timestamp": calendar.timegm(datetime.datetime.utcnow().utctimetuple())   #unix utc ts
         }
         print(msg)
@@ -102,12 +109,3 @@ def publish(client):
         else:
             print(f"Failed to send message to topic {topic}")
 
-def run():
-    client = connect_mqtt()
-    client.loop_start()
-    publish(client)
-    client.loop_stop()
-
-
-if __name__ == '__main__':
-    run()
