@@ -13,7 +13,7 @@ def get_version():
 
 def get_printer_info():
     try:
-        client = OctoRest(url="http://172.16.25.206", apikey="0BF62B17FF5F4997B41692C9E1D90FB7")
+        client = OctoRest(url="http://172.16.25.206", apikey="FFE18A2352674EF58CB3B7A0D7BCD6B9")
         message = ""
         message += str(client.version) + "\n"
         message += str(client.job_info()) + "\n"

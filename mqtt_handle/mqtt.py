@@ -78,34 +78,34 @@ def acquire_data_from_arduino():
 
 
 def publish(client, temp, humi, pressure, acc, gyro, mag, kalman_estimation_temperature,bed_temperature, tool_temperature, printing):
-    while True:
-        time.sleep(1)
-        msg = {
-            "printing": str(printing),
-            "estimate_table_temperature": kalman_estimation_temperature,
-            "octor_print_table_temperature":bed_temperature,
-            "octor_print_tool_temperature": tool_temperature,
-            "arduino_table_temperature": temp,
-            "arduino_humidity": humi,
-            "arduino_pressure": pressure,
-            "arduino_accelerometer_x": acc['x'],
-            "arduino_accelerometer_y": acc['y'],
-            "arduino_accelerometer_z": acc['z'],
-            "arduino_gyroscope_x": gyro['x'],
-            "arduino_gyroscope_y": gyro['y'],
-            "arduino_gyroscope_z": gyro['z'],
-            "arduino_magnetometer_x": mag['x'],
-            "arduino_magnetometer_y": mag['y'],
-            "arduino_magnetometer_z": mag['z'],
-            "timestamp": calendar.timegm(datetime.datetime.utcnow().utctimetuple())   #unix utc ts
-        }
-        print(msg)
-        result = client.publish(topic, json.dumps(msg))
-        status = result[0]
-        if status == 0:
-            print(f"Sent `{msg}` to topic `{topic}`")
-        elif KeyboardInterrupt:
-            break
-        else:
-            print(f"Failed to send message to topic {topic}")
+    time.sleep(1)
+    msg = {
+        "printing": str(printing),
+        "estimate_table_temperature": kalman_estimation_temperature,
+        "octor_print_table_temperature":bed_temperature,
+        "octor_print_tool_temperature": tool_temperature,
+        "arduino_table_temperature": temp,
+        "arduino_humidity": humi,
+        "arduino_pressure": pressure,
+        "arduino_accelerometer_x": acc['x'],
+        "arduino_accelerometer_y": acc['y'],
+        "arduino_accelerometer_z": acc['z'],
+        "arduino_gyroscope_x": gyro['x'],
+        "arduino_gyroscope_y": gyro['y'],
+        "arduino_gyroscope_z": gyro['z'],
+        "arduino_magnetometer_x": mag['x'],
+        "arduino_magnetometer_y": mag['y'],
+        "arduino_magnetometer_z": mag['z'],
+        "timestamp": calendar.timegm(datetime.datetime.utcnow().utctimetuple())   #unix utc ts
+    }
+    print(msg)
+    result = client.publish(topic, json.dumps(msg))
+    status = result[0]
+    if status == 0:
+        print(f"Sent `{msg}` to topic `{topic}`")
+    elif KeyboardInterrupt:
+        print(f"interrupt")
+    else:
+        print(f"Failed to send message to topic {topic}")
+    
 
