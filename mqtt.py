@@ -7,7 +7,7 @@ import struct
 import datetime
 import calendar
 
-broker = 'localhost'
+broker = '172.16.25.224'
 port = 1883
 topic = "rasp1/sensors/"
  
