@@ -12,9 +12,7 @@ services:
         - ../env/influxdb.env
   telegraf:
       image: telegraf:latest
-      container_name: telegraf
       restart: always
-      depends-on: influxdb
       ports:
         - '8094:8094/udp'
       volumes:
@@ -24,7 +22,6 @@ services:
   mosquitto:
     image: eclipse-mosquitto
     hostname: mosquitto
-    depends-on: telegraf
     container_name: mqtt
     restart: unless-stopped
     ports:
