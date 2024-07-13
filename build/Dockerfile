@@ -5,7 +5,7 @@ FROM python:3.10
 WORKDIR /app
 
 # Copie os arquivos de requisitos para o container
-COPY ../src/influx-api/requirements.txt .
+COPY requirements.txt .
 
 # Instale as dependências do projeto
 RUN pip install --no-cache-dir -r requirements.txt
