@@ -22,7 +22,7 @@ class QueryModel(BaseModel):
     start: str
     stop: str
 
-@app.post("/query")
+@app.post("/gettimeline")
 async def query_influxdb(query: QueryModel):
     flux_query = f'''
     from(bucket: "{bucket}")
