@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
+from influxdb_client import InfluxDBClient, Point
+import os
 from influxdb_client import InfluxDBClient, Point, Dialect
 from influxdb_client.client.flux_table import FluxStructureEncoder
 from influxdb_client.client.write_api import SYNCHRONOUS
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import json
-import os
 
 app = FastAPI()
 
@@ -17,15 +19,25 @@ print(token)
 client = InfluxDBClient(url=url, token=token, org=org)
 query_api = client.query_api()
 
-# Definição do modelo de entrada
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+# Definição do modelo de entrada    
 class QueryModel(BaseModel):
     measurement: str
     start: str
     stop: str
     bucket: str
 
-@app.get("/gettimeline")
-async def query_influxdb(query: QueryModel):
+@app.get("/gettimeline/")
+async def query_influxdb(measurement: str = Query(..., description="Measurement name"),
+    start: str = Query(..., description="Start time in ISO format"),
+    stop: str = Query(..., description="Stop time in ISO format"),
+    bucket : str = Query(..., description="Bucket inside InfluxDB")):
     flux_query = f'''
     from(bucket: "{query.bucket}")
         |> range(start: {query.start}, stop: {query.stop})
