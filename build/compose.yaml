@@ -31,3 +31,13 @@ services:
       - ../config/mosquitto:/mosquitto/config
       - ../database/mosquitto/data:/mosquitto/data
       - ../database/mosquitto/log:/mosquitto/log
+  fastapi:
+    build:
+      context: ..
+      dockerfile: ./build/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - influxdb
+    env_file:
+        - ../env/api.env
