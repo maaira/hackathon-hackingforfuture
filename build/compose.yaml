@@ -12,7 +12,6 @@ services:
         - ../env/influxdb.env
   telegraf:
       image: telegraf:latest
-      container_name: telegraf
       restart: always
       ports:
         - '8094:8094/udp'
