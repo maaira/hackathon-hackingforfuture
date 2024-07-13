@@ -9,9 +9,9 @@ import calendar
 
 broker = '172.16.25.224'
 port = 1883
-topic = "rasp1/sensors/"
+topic = "rasp/sensors/"
  
-mac_address = "11:9b:62:1e:37:f0" 
+mac_address = "DC:A6:32:4F:97:8D"#"11:9b:62:1e:37:f0" 
 service_uuid = "12345678-1234-5678-1234-56789abcdef0"
 uuid_dict = {
     "temperature": "7e45d293-9b2a-4812-899a-b3a111fa0f67",
