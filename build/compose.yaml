@@ -31,3 +31,17 @@ services:
       - ../config/mosquitto:/mosquitto/config
       - ../database/mosquitto/data:/mosquitto/data
       - ../database/mosquitto/log:/mosquitto/log
+
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - influxdb
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - INFLUXDB_TOKEN=YOUR_API_TOKEN
+      - INFLUXDB_ORG=YOUR_ORG
+      - INFLUXDB_BUCKET=your_bucket
