@@ -67,47 +67,45 @@ def connect_mqtt():
     client.connect(broker, port)
     return client
 
-
-def publish(client):
-    while True:
-        time.sleep(1)
-        temp = read_temp_humi_press(bleService, uuid_dict['temperature'])
-        humi = read_temp_humi_press(bleService, uuid_dict['humidity'])
-        pressure = read_temp_humi_press(bleService, uuid_dict['pressure'])
-        acc = read_imu(bleService, uuid_dict['accelerometer'])
-        gyro = read_imu(bleService, uuid_dict['gyroscope'])
-        mag = read_imu(bleService, uuid_dict['magnetometer'])
-        msg = {
-            "temperature": temp,
-            "humidity": humi,
-            "pressure": pressure,
-            "accelerometer_x": acc['x'],
-            "accelerometer_y": acc['y'],
-            "accelerometer_z": acc['z'],
-            "gyroscope_x": gyro['x'],
-            "gyroscope_y": gyro['y'],
-            "gyroscope_z": gyro['z'],
-            "magnetometer_x": mag['x'],
-            "magnetometer_y": mag['y'],
-            "magnetometer_z": mag['z'],
-            "timestamp": calendar.timegm(datetime.datetime.utcnow().utctimetuple())   #unix utc ts
-        }
-        print(msg)
-        result = client.publish(topic, json.dumps(msg))
-        status = result[0]
-        if status == 0:
-            print(f"Sent `{msg}` to topic `{topic}`")
-        elif KeyboardInterrupt:
-            break
-        else:
-            print(f"Failed to send message to topic {topic}")
-
-def run():
-    client = connect_mqtt()
-    client.loop_start()
-    publish(client)
-    client.loop_stop()
+def acquire_data_from_arduino():
+    temp = read_temp_humi_press(bleService, uuid_dict['temperature'])
+    humi = read_temp_humi_press(bleService, uuid_dict['humidity'])
+    pressure = read_temp_humi_press(bleService, uuid_dict['pressure'])
+    acc = read_imu(bleService, uuid_dict['accelerometer'])
+    gyro = read_imu(bleService, uuid_dict['gyroscope'])
+    mag = read_imu(bleService, uuid_dict['magnetometer'])
+    return temp, humi, pressure, acc, gyro, mag
 
 
-if __name__ == '__main__':
-    run()
+def publish(client, temp, humi, pressure, acc, gyro, mag, kalman_estimation_temperature,bed_temperature, tool_temperature, printing):
+    time.sleep(1)
+    msg = {
+        "printing": str(printing),
+        "estimate_table_temperature": kalman_estimation_temperature,
+        "octor_print_table_temperature":bed_temperature,
+        "octor_print_tool_temperature": tool_temperature,
+        "arduino_table_temperature": temp,
+        "arduino_humidity": humi,
+        "arduino_pressure": pressure,
+        "arduino_accelerometer_x": acc['x'],
+        "arduino_accelerometer_y": acc['y'],
+        "arduino_accelerometer_z": acc['z'],
+        "arduino_gyroscope_x": gyro['x'],
+        "arduino_gyroscope_y": gyro['y'],
+        "arduino_gyroscope_z": gyro['z'],
+        "arduino_magnetometer_x": mag['x'],
+        "arduino_magnetometer_y": mag['y'],
+        "arduino_magnetometer_z": mag['z'],
+        "timestamp": calendar.timegm(datetime.datetime.utcnow().utctimetuple())   #unix utc ts
+    }
+    print(msg)
+    result = client.publish(topic, json.dumps(msg))
+    status = result[0]
+    if status == 0:
+        print(f"Sent `{msg}` to topic `{topic}`")
+    elif KeyboardInterrupt:
+        print(f"interrupt")
+    else:
+        print(f"Failed to send message to topic {topic}")
+    
+
