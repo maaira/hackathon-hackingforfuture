@@ -4,14 +4,15 @@ from influxdb_client.client.flux_table import FluxStructureEncoder
 from influxdb_client.client.write_api import SYNCHRONOUS
 from pydantic import BaseModel
 import json
+import os
 
 app = FastAPI()
 
 # Configurações do InfluxDB
-url = "http://localhost:8086"  # Substitua pelo seu URL
-token = "YOUR_API_TOKEN"  # Substitua pelo seu token de API
-org = "YOUR_ORG"  # Substitua pela sua organização
-bucket = "your_bucket"  # Substitua pelo seu bucket
+url = os.getenv("INFLUXDB_URL", "http://localhost:8086")
+token = os.getenv("INFLUXDB_TOKEN", "YOUR_API_TOKEN")
+org = os.getenv("INFLUXDB_ORG", "YOUR_ORG")
+bucket = os.getenv("INFLUXDB_BUCKET", "your_bucket")
 
 client = InfluxDBClient(url=url, token=token, org=org)
 query_api = client.query_api()
