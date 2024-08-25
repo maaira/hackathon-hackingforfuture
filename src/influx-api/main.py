@@ -39,9 +39,9 @@ async def query_influxdb(measurement: str = Query(..., description="Measurement 
     stop: str = Query(..., description="Stop time in ISO format"),
     bucket : str = Query(..., description="Bucket inside InfluxDB")):
     flux_query = f'''
-    from(bucket: "{query.bucket}")
-        |> range(start: {query.start}, stop: {query.stop})
-        |> filter(fn: (r) => r._measurement == "{query.measurement}")
+    from(bucket: "{bucket}")
+        |> range(start: {start}, stop: {stop})
+        |> filter(fn: (r) => r._measurement == "{measurement}")
     '''
     try:
         tables = query_api.query(flux_query, org=org)

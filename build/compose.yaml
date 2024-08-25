@@ -1,6 +1,11 @@
 services:
   influxdb:
       image: influxdb:latest # influx v2
+      logging:
+          driver: "json-file"
+          options:
+              max-file: 5
+              max-size: 10m 
       container_name: influxdb
       restart: unless-stopped
       ports:
@@ -12,6 +17,11 @@ services:
         - ../env/influxdb.env
   telegraf:
       image: telegraf:latest
+      logging:
+          driver: "json-file"
+          options:
+              max-file: 5
+              max-size: 10m
       restart: always
       ports:
         - '8094:8094/udp'
@@ -22,11 +32,16 @@ services:
   mosquitto:
     image: eclipse-mosquitto
     hostname: mosquitto
+    logging:
+          driver: "json-file"
+          options:
+              max-file: 5
+              max-size: 10m
     container_name: mqtt
     restart: unless-stopped
     ports:
       - "1883:1883"
-      - "5050:5050"
+      - "4050:4050"
     volumes:
       - ../config/mosquitto:/mosquitto/config
       - ../database/mosquitto/data:/mosquitto/data
@@ -35,6 +50,11 @@ services:
     build:
       context: ..
       dockerfile: ./build/Dockerfile
+    logging:
+          driver: "json-file"
+          options:
+              max-file: 5
+              max-size: 10m
     ports:
       - "8000:8000"
     depends_on:
